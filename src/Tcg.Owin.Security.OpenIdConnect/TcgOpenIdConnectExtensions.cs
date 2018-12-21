@@ -291,7 +291,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
             return Task.FromResult(0);
         }
 
-        private static async Task AddUserClaimsAsync(ClaimsIdentity claimsIdent, string accessToken, string authority)
+        private static async Task AddUserClaimsAsync(ClaimsIdentity claimsIdent, string authority, string accessToken)
         {
             string userInfoEndpoint = $"{authority}/connect/userinfo";
             var userInfoResponse = await _client.GetUserInfoAsync(new UserInfoRequest
