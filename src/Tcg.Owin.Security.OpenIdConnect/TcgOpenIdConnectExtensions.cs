@@ -153,7 +153,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
         private static async Task AuthorizationCodeReceived(AuthorizationCodeReceivedNotification n, string authority, string clientId, string clientSecret)
         {
-            var tokenEndpoint = $"{options.Authority}/connect/token";
+            var tokenEndpoint = $"{authority}/connect/token";
             if (n.Code != null)
             {
                 // use the code to get the access and refresh token
