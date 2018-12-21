@@ -252,10 +252,10 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
                 string host = n.OwinContext.Request.Uri.Host;
 
-                string preferredIdp = options?.PreferedIdps.FirstOrDefault(x => string.Equals(host, x.HostName, StringComparison.OrdinalIgnoreCase))?.Idp
+                string preferredIdp = options.PreferedIdps?.FirstOrDefault(x => string.Equals(host, x.HostName, StringComparison.OrdinalIgnoreCase))?.Idp
                     ?? options.FallbackPreferedIdp;
 
-                var forceDomain = options?.ForceDomains.FirstOrDefault(x => string.Equals(host, x.HostName, StringComparison.OrdinalIgnoreCase))?.Domain;
+                var forceDomain = options.ForceDomains?.FirstOrDefault(x => string.Equals(host, x.HostName, StringComparison.OrdinalIgnoreCase))?.Domain;
 
                 string loginDomains = null;
                 if (options.LoginDomains != null)
