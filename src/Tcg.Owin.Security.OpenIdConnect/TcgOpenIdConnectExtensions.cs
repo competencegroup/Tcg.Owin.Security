@@ -75,12 +75,12 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
                     MessageReceived  = async n =>
                     {
-                        await options.Notifications.MessageReceived(n);
+                        await options.Notifications?.MessageReceived(n);
                     },
 
                     SecurityTokenReceived = async n =>
                     {
-                        await options.Notifications.SecurityTokenReceived(n);
+                        await options.Notifications?.SecurityTokenReceived(n);
                     },
 
                     SecurityTokenValidated = async n =>
