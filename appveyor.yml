@@ -30,6 +30,10 @@ before_build:
 build_script:
   - dotnet build -c Release
 
+artifacts:
+  - path: src\Tcg.Owin.Security.OpenIdConnect\bin\Release\*.nupkg
+    name: ReleaseArtifacts
+
 deploy:
   - provider: NuGet
     on:
