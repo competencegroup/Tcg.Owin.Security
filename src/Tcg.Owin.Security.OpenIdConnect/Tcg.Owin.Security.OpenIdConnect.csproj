@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.10.4" />
+    <PackageReference Include="Microsoft.Owin" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Security.OpenIdConnect" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>
