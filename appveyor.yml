@@ -36,4 +36,4 @@ deploy:
       appveyor_repo_tag: true
     api_key:
       secure: gKVQGHC6gF2JSdhVV8KcO9WNAPd0N9DnpUQBBTbCsdhRYZ5m+pp0jpbaPGEOhtU8
-    artifact: /.*\.nupkg/
+    artifact: /src\\Tcg.Owin.Security.OpenIdConnect\\bin\\Release\\.*\.nupkg/
