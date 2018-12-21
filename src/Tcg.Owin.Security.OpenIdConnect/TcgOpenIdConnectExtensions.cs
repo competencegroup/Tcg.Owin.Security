@@ -69,7 +69,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
                     AuthorizationCodeReceived = async n =>
                     {
-                        await AuthorizationCodeReceived(n, tokenEndpoint, options.ClientId, options.ClientSecret);
+                        await AuthorizationCodeReceived(n, options.Authority, options.ClientId, options.ClientSecret);
                         await options.Notifications?.AuthorizationCodeReceived(n);
                     },
 
@@ -85,7 +85,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
                     SecurityTokenValidated = async n =>
                     {
-                        await SecurityTokenValidated(n);
+                        await SecurityTokenValidated(n, options.Authority);
                         await options.Notifications?.SecurityTokenValidated(n);
                     },
 
@@ -151,9 +151,9 @@ namespace Tcg.Owin.Security.OpenIdConnect
             }
         }
 
-        private static async Task AuthorizationCodeReceived(AuthorizationCodeReceivedNotification n, string tokenEndpoint, string clientId, string clientSecret)
+        private static async Task AuthorizationCodeReceived(AuthorizationCodeReceivedNotification n, string authority, string clientId, string clientSecret)
         {
-
+            var tokenEndpoint = $"{options.Authority}/connect/token";
             if (n.Code != null)
             {
                 // use the code to get the access and refresh token
@@ -167,7 +167,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 if (includeUserClaims)
                 {
                     //Add userClaims from userInfoEndpoint with the access token
-                    await AddUserClaimsAsync(claimsIdent, n.Options.Authority, tokenResponse.AccessToken);
+                    await AddUserClaimsAsync(claimsIdent, authority, tokenResponse.AccessToken);
 
 
                     //Add portal
@@ -182,7 +182,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 n.AuthenticationTicket.Properties.ExpiresUtc = tokenResponse.ExpiresUtc();
             }
         }
-        private static async Task SecurityTokenValidated(SecurityTokenValidatedNotification<OpenIdConnectMessage, OpenIdConnectAuthenticationOptions> n)
+        private static async Task SecurityTokenValidated(SecurityTokenValidatedNotification<OpenIdConnectMessage, OpenIdConnectAuthenticationOptions> n, string authority)
         {
 
             var id_token = n.ProtocolMessage.IdToken;
@@ -193,7 +193,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 if (n.ProtocolMessage.AccessToken != null)
                 {
                     //Add userClaims from userInfoEndpoint
-                    await AddUserClaimsAsync(claimsIdent, n.Options.Authority, n.ProtocolMessage.AccessToken);
+                    await AddUserClaimsAsync(claimsIdent, authority, n.ProtocolMessage.AccessToken);
 
                     //Add portal
                     //AddPortalGroupInfo(claimsIdent);
