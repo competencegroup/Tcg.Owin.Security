@@ -31,8 +31,7 @@ build_script:
   - dotnet build -c Release
 
 deploy:
-  - provider: Environment
-    name: NuGet
+  - provider: NuGet
     on:
       appveyor_repo_tag: true
     api_key:
