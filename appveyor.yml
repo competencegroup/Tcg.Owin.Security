@@ -25,7 +25,6 @@ dotnet_csproj:
   informational_version: '{version}'
 
 before_build:
-  - ps: .\build\Set-BuildVersion -Version $env:APPVEYOR_BUILD_VERSION -Suffix $env:VERSION_SUFFIX
   - appveyor-retry dotnet restore -v Minimal
 
 build_script:
