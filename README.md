@@ -5,7 +5,30 @@ The [Tcg.Owin.Cookies.SessionStore][2] project has 2 implementations available:
 * Tcg.Owin.Cookies.SessionStore.Memory
 * Tcg.Owin.Cookies.SessionStore.Redis
 
-# ACR values to be set externally
+# Installation
+```
+Install-Package Tcg.Owin.Security.OpenIdConnect
+```
+
+# Configuration
+```
+app.UseTcgOpenIdConnectAuthentication(new TcgOpenIdConnectAuthenticationOptions
+{
+    ClientId = <clientId>,    
+    ClientSecret = <clientSecret>,
+    ResponseType = "id_token token",
+    Authority = <authority>,
+    Scope = <required scopes>,
+    RedirectUri = <redirect url>,
+    PostLogoutRedirectUri = <post logout redirect url>,
+    SessionStore = new RedisAuthenticationSessionStore(<redis connection string>)
+    // or
+    SessionStore = new MemoryAuthenticationSessionStore()
+});
+
+```
+
+# Extra ACR values
 * `tenant` - the portalIdentifier of the academy portal
 * `externalCss` - to load external CSS
 
