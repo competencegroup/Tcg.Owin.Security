@@ -38,9 +38,9 @@ namespace Tcg.Owin.Security.OpenIdConnect
             {
                 ClientId = options.ClientId,
                 ClientSecret = options.ClientSecret,
-
+                 
                 Authority = options.Authority,
-
+                AuthenticationMode = options.AuthenticationMode,
                 AuthenticationType = options.AuthenticationType ?? "STS",
 
                 ResponseType = options.ResponseType,

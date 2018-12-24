@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Notifications;
 using Microsoft.Owin.Security.OpenIdConnect;
@@ -29,6 +30,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
         public List<string> ExtraAcrValues { get; set; }
         public List<Guid> LoginDomains { get; set; }
         public IAuthenticationSessionStore SessionStore { get; set; }
+        public AuthenticationMode AuthenticationMode { get; set; }
     }
 
     public class PreferedIdp
