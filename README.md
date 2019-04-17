@@ -25,8 +25,22 @@ app.UseTcgOpenIdConnectAuthentication(new TcgOpenIdConnectAuthenticationOptions
     // or
     SessionStore = new MemoryAuthenticationSessionStore()
 });
-
 ```
+
+# Signout
+```
+public ActionResult LogOff()
+{
+    //Log out of the Owin Midleware
+    Request.GetOwinContext().Authentication.SignOut();
+
+    //Abandon the MVC Sessions
+    HttpContext.Session.Abandon();
+
+    return new EmptyResult();
+}
+```
+The `Request.GetOwinContext().Authentication.SignOut();` triggers the RedirectToIdentityProvider in [TcgOpenIdConnectExtensions](https://github.com/competencegroup/Tcg.Owin.Security/blob/master/src/Tcg.Owin.Security.OpenIdConnect/TcgOpenIdConnectExtensions.cs) with `ProtocolMessage.RequestType == OpenIdConnectRequestType.Logout`
 
 # Extra ACR values
 * `tenant` - the portalIdentifier of the academy portal
