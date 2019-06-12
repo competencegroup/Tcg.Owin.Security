@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
@@ -114,10 +115,14 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 //Check for expired token
                 if (DateTimeOffset.UtcNow.AddMinutes(5) >= expiresAt)
                 {
+                    Trace.WriteLine($"Token expiring, expiresAt: {expiresAt}, now: {DateTimeOffset.UtcNow}");
+
                     string refreshToken = claimsIdentity.FindFirst("refresh_token")?.Value;
 
                     if (refreshToken == null)
                     {
+                        Trace.WriteLine("No refresh token, rejecting identity");
+
                         ctx.RejectIdentity();
                         return;
                     }
@@ -125,7 +130,9 @@ namespace Tcg.Owin.Security.OpenIdConnect
                     var tokenResponse = await StsTokenHelper.RefreshToken(_client, tokenEndpoint, clientId, clientSecret, refreshToken);
 
                     if (tokenResponse.IsError)
-                    { 
+                    {
+                        Trace.WriteLine("RefreshToken resulted in error, rejecting identity");
+
                         ctx.RejectIdentity();
                         return;
                     }
@@ -147,6 +154,8 @@ namespace Tcg.Owin.Security.OpenIdConnect
             }
             catch (Exception ex)
             {
+                Trace.WriteLine($"Exception occurred, rejecting identity\r\n{ex.Message}\r\n{ex.StackTrace}");
+
                 ctx.RejectIdentity();
             }
         }
