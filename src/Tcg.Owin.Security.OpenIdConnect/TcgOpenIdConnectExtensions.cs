@@ -14,6 +14,8 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using Exceptionless;
+using Exceptionless.Logging;
 
 namespace Tcg.Owin.Security.OpenIdConnect
 {
@@ -32,6 +34,14 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 Provider = new CookieAuthenticationProvider
                 {
                     OnValidateIdentity = n => ValidateAccessToken(n, tokenEndpoint, options.ClientId, options.ClientSecret),
+                    OnException = n =>
+                    {
+                        ExceptionlessClient.Default.CreateLog("STS_LOGGER", "CookieAuthenticationProvider OnException", LogLevel.Debug).Submit();
+                        if (n.Exception != null)
+                        {
+                            n.Exception.ToExceptionless().SetMessage("OnException in CookieAuthenticationProvider").Submit();
+                        }
+                    }
                 },
             });
 
@@ -65,6 +75,12 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 {
                     AuthenticationFailed = async n =>
                     {
+                        ExceptionlessClient.Default.CreateLog("STS_LOGGER", "Authentication failed", LogLevel.Debug).Submit();
+
+                        if (n.Exception != null)
+                        {
+                            n.Exception.ToExceptionless().SetMessage("Exception from AuthenticationFailed").Submit();
+                        }
                         await options.Notifications?.AuthenticationFailed(n);
                     },
 
@@ -116,12 +132,15 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 if (DateTimeOffset.UtcNow.AddMinutes(5) >= expiresAt)
                 {
                     Trace.WriteLine($"Token expiring, expiresAt: {expiresAt}, now: {DateTimeOffset.UtcNow}");
+                    ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"Token expiring, expiresAt: {expiresAt}, now: {DateTimeOffset.UtcNow}", LogLevel.Debug).Submit();
 
                     string refreshToken = claimsIdentity.FindFirst("refresh_token")?.Value;
 
                     if (refreshToken == null)
                     {
                         Trace.WriteLine("No refresh token, rejecting identity");
+
+                        ExceptionlessClient.Default.CreateLog("STS_LOGGER", "No refresh token, rejecting identity", LogLevel.Debug).Submit();
 
                         ctx.RejectIdentity();
                         return;
@@ -132,6 +151,8 @@ namespace Tcg.Owin.Security.OpenIdConnect
                     if (tokenResponse.IsError)
                     {
                         Trace.WriteLine("RefreshToken resulted in error, rejecting identity");
+
+                        ExceptionlessClient.Default.CreateLog("STS_LOGGER", "RefreshToken resulted in error, rejecting identity", LogLevel.Debug).Submit();
 
                         ctx.RejectIdentity();
                         return;
@@ -154,6 +175,11 @@ namespace Tcg.Owin.Security.OpenIdConnect
             }
             catch (Exception ex)
             {
+                ex.ToExceptionless()
+                  .SetSource("STS_LOGGER")
+                  .SetMessage("Exception in ValidateAccessToken!")
+                  .Submit();
+
                 Trace.WriteLine($"Exception occurred, rejecting identity\r\n{ex.Message}\r\n{ex.StackTrace}");
 
                 ctx.RejectIdentity();
