@@ -121,7 +121,13 @@ namespace Tcg.Owin.Security.OpenIdConnect
         {
             var claimsIdentity = ctx?.Identity;
 
-            if (claimsIdentity == null) { return; }
+            if (claimsIdentity == null)
+            {
+                ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"ClaimsIdentity is null", LogLevel.Debug)
+                    .AddObject(ctx == null, "ctx is null")
+                    .Submit();
+                return;
+            }
 
             DateTimeOffset expiresAt;
             DateTimeOffset.TryParse(claimsIdentity.FindFirst("expires_at")?.Value, out expiresAt);
@@ -188,6 +194,9 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
         private static async Task AuthorizationCodeReceived(AuthorizationCodeReceivedNotification n, string authority, string clientId, string clientSecret)
         {
+            ExceptionlessClient.Default.CreateLog("AuthorizationCodeReceived", $"AuthorizationCodeReceived: {n.Code}", LogLevel.Debug).Submit();
+
+
             var tokenEndpoint = $"{authority}/connect/token";
             if (n.Code != null)
             {
@@ -219,11 +228,15 @@ namespace Tcg.Owin.Security.OpenIdConnect
         }
         private static async Task SecurityTokenValidated(SecurityTokenValidatedNotification<OpenIdConnectMessage, OpenIdConnectAuthenticationOptions> n, string authority)
         {
-
+            ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"SecurityTokenValidated", LogLevel.Debug)
+                .AddObject(n.ProtocolMessage.AccessToken, "accessToken")
+                .AddObject(n.ProtocolMessage.IdToken, "idToken")
+                .Submit();
             var id_token = n.ProtocolMessage.IdToken;
             var claimsIdent = n.AuthenticationTicket.Identity;
             if (claimsIdent != null)
             {
+
                 //If Implicit Flow
                 if (n.ProtocolMessage.AccessToken != null)
                 {
@@ -236,6 +249,9 @@ namespace Tcg.Owin.Security.OpenIdConnect
                     //Calculate AccessToken Expiration
                     int expiresIn = int.Parse(n.ProtocolMessage.ExpiresIn);
                     DateTimeOffset expiresUtc = DateTimeOffset.UtcNow.AddSeconds(expiresIn);
+
+                    ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"SecurityTokenValidated expiration {expiresUtc}", LogLevel.Debug)
+                        .Submit();
 
                     //Add access_token for DomSec Api call"
                     claimsIdent.AddOrUpdateClaim("access_token", n.ProtocolMessage.AccessToken);
@@ -256,6 +272,10 @@ namespace Tcg.Owin.Security.OpenIdConnect
             TcgOpenIdConnectAuthenticationOptions options
             )
         {
+            ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"RedirectToIdentityProvider {n.ProtocolMessage.RequestType}", LogLevel.Debug)
+                .AddObject(n.OwinContext.Authentication.User.Identity.IsAuthenticated, "IsAuthenticated")
+                .AddObject(n.OwinContext.Authentication.User.Identity.Name, "Identity.Name")
+                .Submit();
 
             // if signing out, add the id_token_hint
             if (n.ProtocolMessage.RequestType == OpenIdConnectRequestType.Logout)
@@ -338,7 +358,17 @@ namespace Tcg.Owin.Security.OpenIdConnect
 
             if (userInfoResponse.IsError)
             {
-                if (userInfoResponse.IsError) { throw new Exception($"{userInfoResponse.Error}"); }
+                ExceptionlessClient.Default.CreateLog("STS_LOGGER", $"user info endpoint error", LogLevel.Error)
+                    .AddObject(userInfoResponse.Error, "Error")
+                    .AddObject(userInfoResponse.HttpStatusCode, "StatusCode")
+                    .Submit();
+
+                if(userInfoResponse.Exception != null)
+                {
+                    userInfoResponse.Exception.ToExceptionless().Submit();
+                }
+
+                throw new Exception($"{userInfoResponse.Error}");
             }
 
             //Use the FixedClaims that are parsed with DateParseHandling.None
