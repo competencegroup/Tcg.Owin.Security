@@ -35,6 +35,7 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 CookieHttpOnly = options.CookieHttpOnly,
                 CookieDomain = options.CookieDomain,
                 CookieSecure = options.CookieSecure,
+                CookieSameSite = options.CookieSameSite,
                 
                 Provider = new CookieAuthenticationProvider
                 {
