@@ -32,6 +32,10 @@ namespace Tcg.Owin.Security.OpenIdConnect
             {
                 AuthenticationType = "DomainSecurity STS Cookie",
                 SessionStore = options.SessionStore,
+                CookieHttpOnly = options.CookieHttpOnly,
+                CookieDomain = options.CookieDomain,
+                CookieSecure = options.CookieSecure,
+                
                 Provider = new CookieAuthenticationProvider
                 {
                     OnValidateIdentity = n => ValidateAccessToken(n, tokenEndpoint, options.ClientId, options.ClientSecret),
