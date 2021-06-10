@@ -23,9 +23,6 @@ jobs:
       run: dotnet test --no-build -c Release --verbosity normal
     - name: Pack
       run: dotnet pack -c Release
-    - name: debug
-      run: |
-        ls src/Tcg.Owin.Security.OpenIdConnect/bin/Release
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
@@ -33,6 +30,6 @@ jobs:
         path: '**/*.nupkg'
         retention-days: 5
     - name: Publish
-      run: dotnet nuget push --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Tcg.Owin.Security.OpenIdConnect/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
       
 
