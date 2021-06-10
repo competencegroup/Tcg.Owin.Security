@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Notifications;
@@ -31,6 +32,10 @@ namespace Tcg.Owin.Security.OpenIdConnect
         public List<Guid> LoginDomains { get; set; }
         public IAuthenticationSessionStore SessionStore { get; set; }
         public AuthenticationMode AuthenticationMode { get; set; }
+        public bool CookieHttpOnly { get; set; }
+        public string CookieDomain { get; set; }
+        public CookieSecureOption CookieSecure { get; set; }
+        public SameSiteMode? CookieSameSite { get; set; }
     }
 
     public class PreferedIdp
