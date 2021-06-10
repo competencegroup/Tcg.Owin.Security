@@ -1,11 +1,8 @@
 name: Release
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+  release
+  
 jobs:
   build:
 
@@ -23,4 +20,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet nuget push --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      
 
