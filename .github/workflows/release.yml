@@ -18,15 +18,20 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build -c Release --verbosity normal
     - name: Pack
-      run: dotnet pack
+      run: dotnet pack -c Release
     - name: debug
       run: |
-        ls
-        ls src/Tcg.Owin.Security.OpenIdConnect
+        ls src/Tcg.Owin.Security.OpenIdConnect/bin/Release
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: **/*.nupkg
+          retention-days: 5
     - name: Publish
       run: dotnet nuget push --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
       
