@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="3.10.4" />
-    <PackageReference Include="Kentor.OwinCookieSaver" Version="1.1.1" />
     <PackageReference Include="Microsoft.Owin" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.OpenIdConnect" Version="4.2.0" />
     <PackageReference Include="MinVer" Version="2.5.0">

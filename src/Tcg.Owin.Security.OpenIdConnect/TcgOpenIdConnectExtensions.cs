@@ -1,6 +1,7 @@
 ﻿using IdentityModel.Client;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Notifications;
@@ -26,8 +27,6 @@ namespace Tcg.Owin.Security.OpenIdConnect
             
             var tokenEndpoint = $"{options.Authority}/connect/token";
 
-            app.UseKentorOwinCookieSaver();
-            
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = "DomainSecurity STS Cookie",
@@ -36,7 +35,10 @@ namespace Tcg.Owin.Security.OpenIdConnect
                 CookieDomain = options.CookieDomain,
                 CookieSecure = options.CookieSecure,
                 CookieSameSite = options.CookieSameSite,
-                
+
+                CookieManager = new SystemWebCookieManager(),
+
+
                 Provider = new CookieAuthenticationProvider
                 {
                     OnValidateIdentity = n => ValidateAccessToken(n, tokenEndpoint, options.ClientId, options.ClientSecret),
