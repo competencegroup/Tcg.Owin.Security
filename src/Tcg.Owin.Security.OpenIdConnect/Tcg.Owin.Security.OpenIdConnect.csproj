@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.Owin" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.OpenIdConnect" Version="4.2.0" />
-    <PackageReference Include="NuGet.Versioning" Version="5.9.1" />
+    <PackageReference Include="semver" Version="2.0.6" />
   </ItemGroup>
 
 </Project>
