@@ -1,0 +1,27 @@
+version: 2
+updates:
+  # GitHub Actions used in .github/workflows (e.g. checkout, setup-dotnet)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # NuGet packages in the solution
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nuget-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Katana/Owin 4.2.x is built against Microsoft.IdentityModel 5.x; stay on that major line
+      - dependency-name: "Microsoft.IdentityModel.*"
+        update-types:
+          - version-update:semver-major
